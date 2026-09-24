@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cus(tom) Cake - ระบบสั่งเค้ก</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style>
+        /* แต่ง Scrollbar ให้ดูสวยงามเข้ากับเว็บ */
+        #orderList::-webkit-scrollbar { width: 8px; }
+        #orderList::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 8px; }
+        #orderList::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 8px; }
+        #orderList::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+    </style>
+</head>
+<body class="bg-gray-100 p-6 md:p-10 font-sans">
+    <div class="max-w-3xl mx-auto bg-white p-6 md:p-8 rounded-xl shadow-md">
+        <img src="img/cc001.png" alt="Cus(tom) Cake Logo" class="mx-auto mb-4 w-32 h-32 object-contain">
+        <h1 class="text-2xl md:text-3xl font-bold mb-6 text-center text-blue-600">Cus(tom) Cake</h1>
+
+        <div class="space-y-4 mb-6">
+            <div>
+                <label class="block font-semibold mb-1 text-gray-700">1. เลือกฐานเค้ก (Base)</label>
+                <select id="baseSelect" class="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-400 outline-none">
+                    <option value="sponge">เค้กสปอนจ์ - 100 บาท</option>
+                    <option value="moose">เค้กมูส - 120 บาท</option>
+                    <option value="crape">เค้กเคร์ป - 120 บาท</option>
+                    <option value="cheesecake">เค้กชีสเค้ก - 120 บาท</option>
+                </select>
+            </div>
+
+            <div>
+                <label class="block font-semibold mb-1 text-gray-700">2. เลือกครีม (Cream)</label>
+                <select id="creamSelect" class="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-400 outline-none">
+                    <option value="milk">ครีมนมสด - 50 บาท</option>
+                    <option value="matcha">ครีมชาเขียว - 60 บาท</option>
+                    <option value="strawberry">ครีมสตรอว์เบอร์รี - 60 บาท</option>
+                    <option value="chocolate">ครีมช็อกโกแลต - 60 บาท</option>
+                    <option value="orange">ครีมส้ม - 60 บาท</option>
+                    <option value="lemon">ครีมเลมอน - 60 บาท</option>
+                    <option value="chocomint">ครีมช็อกโกแลตมินต์ - 60 บาท</option>
+                    <option value="coconut">ครีมมะพร้าว - 60 บาท</option>
+                    <option value="caramel">ครีมคาราเมล - 60 บาท</option>
+                    <option value="coffee">ครีมกาแฟ - 60 บาท</option>
+                </select>
+            </div>
+
+            <div>
+                <label class="block font-semibold mb-2 text-gray-700">3. เลือกท็อปปิ้ง (Topping)</label>
+                <div class="flex flex-wrap gap-4">
+                    <label class="inline-flex items-center cursor-pointer">
+                        <input type="checkbox" id="topStrawberry" class="rounded text-blue-600 focus:ring-blue-500 mr-2"> 
+                        สตรอว์เบอร์รี (+30 บาท)
+                    </label>
+                    <label class="inline-flex items-center cursor-pointer">
+                        <input type="checkbox" id="topBrownie" class="rounded text-blue-600 focus:ring-blue-500 mr-2"> 
+                        บราวนี่ (+40 บาท)
+                    </label>
+                    <label class="inline-flex items-center cursor-pointer">
+                        <input type="checkbox" id="topKitKat" class="rounded text-blue-600 focus:ring-blue-500 mr-2"> 
+                        คิตแคต (+50 บาท)
+                    </label>
+                    <label class="inline-flex items-center cursor-pointer">
+                        <input type="checkbox" id="topOreo" class="rounded text-blue-600 focus:ring-blue-500 mr-2"> 
+                        โอริโอ้ (+40 บาท)
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <button id="addOrderBtn" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg shadow transition">
+            สร้างออเดอร์ใหม่
+        </button>
+
+        <div class="mt-8 border-t pt-6">
+            <h2 class="text-xl font-bold mb-4 text-gray-800">รายการออเดอร์ทั้งหมด</h2>
+            
+            <div id="orderList" class="space-y-4 mb-6 h-[400px] overflow-y-auto p-4 border border-gray-300 rounded-lg bg-gray-50 shadow-inner">
+                <p id="emptyState" class="text-gray-400 text-center py-4 mt-8">ยังไม่มีรายการสั่งซื้อ</p>
+            </div>
+
+            <div class="p-5 bg-white rounded-lg border border-gray-200 shadow-sm">
+                <div class="flex justify-between items-center mb-3 border-b border-gray-200 pb-3">
+                    <span class="text-lg font-bold text-gray-700">จำนวนออเดอร์ค้างส่ง:</span>
+                    <span class="text-lg font-bold text-blue-600"><span id="totalOrdersCount">0</span> รายการ</span>
+                </div>
+                <div class="flex justify-between items-center">
+                    <span class="text-lg font-bold text-gray-700">ราคารวมรายการทั้งหมด:</span>
+                    <span class="text-lg font-bold text-red-600"><span id="grandTotalPrice">0</span> บาท</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
